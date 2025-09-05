@@ -28,18 +28,122 @@
   background-color: #f5f5f5;
 }
 
-.cls-tabs {
-  background-color: white;
-  margin: 0 24px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.cls-manage-tabs {
+  &.ant-tabs {
+    .ant-tabs-tab {
+      margin-right: -12px;
+      padding: 4px 12px;
+      border-radius: 5px;
+      background-color: #e4e6e8;
+      color: #666666;
+      border: 1px solid #ccc;
+      transition: unset;
+      border: unset;
 
-  .ant-tabs-nav {
-    padding: 0 24px;
-    margin: 0;
-    border-bottom: 1px solid #e6f7ff;
+      &::after {
+        content: "";
+        width: 28px;
+        position: absolute;
+        bottom: 0;
+        right: -23px;
+        height: 30px;
+        display: block;
+        background-image: radial-gradient(
+          circle at 125% 0,
+          transparent 0%,
+          transparent 30px,
+          #e4e6e8 32px
+        );
+      }
+    }
+
+    .ant-tabs-nav {
+      .ant-tabs-nav-wrap {
+        margin: 0px !important;
+        display: block;
+        margin: 0 24px;
+        border-bottom: 3px solid #e4e6e8;
+      }
+      .ant-tabs-nav-list {
+        .ant-tabs-tab-active {
+          background-color: #0c28a8;
+
+          &::after {
+            background-image: radial-gradient(
+              circle at 125% 0,
+              transparent 0%,
+              transparent 30px,
+              #0c28a8 32px
+            );
+            border-bottom: 2px solid #1677ff;
+          }
+
+          .cls-label {
+            color: #fff;
+          }
+        }
+
+        .ant-tabs-tab {
+          .cls-label {
+            .cls-svg-icon {
+              vertical-align: text-top;
+              margin-right: 12px;
+            }
+          }
+        }
+      }
+    }
+
+    $colors: (
+      1: White,
+      2: white,
+      3: white,
+    );
+
+    .ant-tabs-tab {
+      @each $index, $color in $colors {
+        &:nth-child(#{$index}) {
+          &.ant-tabs-tab-active {
+            .ant-tabs-tab-btn {
+              color: #fff !important;
+              .cls-label {
+                .cls-svg-icon {
+                  svg {
+                    path {
+                      stroke: $color;
+
+                      @if $index ==2 {
+                        fill: $color;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
+
+// .cls-tabs {
+//   background-color: white;
+//   margin: 0 24px;
+//   border-radius: 8px;
+//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+//   .ant-tabs-nav {
+//     padding: 0 24px;
+//     //
+//     margin-bottom: 20px;
+//     text-align: left;
+//     border-bottom: 1px solid #e6f7ff;
+//     .ant-tabs-nav-wrap {
+//       display: block !important;
+//     }
+//   }
+// }
 
 .cls-category-wrapper {
   padding: 0 24px;

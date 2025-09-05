@@ -139,7 +139,8 @@ const TemplateList: React.FC<TemplateListProps> = ({ onSelectTemplate }) => {
           centered
           size="large"
           items={tabItems}
-          className="cls-tabs"
+          // className="cls-tabs"
+          className="cls-manage-tabs "
         />
       </Content>
 

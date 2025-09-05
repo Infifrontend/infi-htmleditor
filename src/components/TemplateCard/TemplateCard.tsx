@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Card, Typography, Button } from "antd";
-import { EyeOutlined, EditOutlined } from "@ant-design/icons";
+import { EyeOutlined, CheckSquareOutlined } from "@ant-design/icons";
 import html2canvas from "html2canvas";
 import { Template } from "../../types";
 import "./TemplateCard.scss";
@@ -53,13 +53,13 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
           Preview
         </Button>,
         <Button
-          key="edit"
+          key="use"
           type="primary"
-          icon={<EditOutlined />}
+          icon={<CheckSquareOutlined />}
           onClick={() => onEdit(template)}
-          className="cls-btn-edit"
+          className="cls-btn-use"
         >
-          Edit
+          Use Template
         </Button>,
       ]}
     >
@@ -70,7 +70,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
 
         <div className="cls-preview-box">
           {imageUrl ? (
-            <div className="cls-preview-img-container">
+            <div className="cls-preview-img-container" onDoubleClick={() => onEdit(template)}>
               <img
                 src={imageUrl}
                 alt="template preview"

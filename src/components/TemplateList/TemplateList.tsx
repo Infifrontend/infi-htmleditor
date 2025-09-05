@@ -138,7 +138,7 @@ const TemplateList: React.FC<TemplateListProps> = ({ onSelectTemplate }) => {
               setPreviewVisible(false);
             }}
           >
-            Edit Template
+            Use Template
           </Button>,
         ]}
         width={800}

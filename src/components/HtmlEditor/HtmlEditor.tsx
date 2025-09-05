@@ -24,7 +24,11 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
 
   // Refs for contenteditable div and textarea
   const editorRef = useRef<HTMLDivElement>(null);
-  const sourceRef = useRef<HTMLTextAreaElement>(null);
+  const sourceRef = useRef<any>(null); // keep if you need programmatic access (AntD wraps textarea)
+  const sourceWrapperRef = useRef<HTMLDivElement>(null); // <-- wrapper DOM element used for measurements
+
+  // State to hold calculated source TextArea height
+  const [sourceHeight, setSourceHeight] = useState<string>("200px");
 
   // Update contenteditable div when content changes
   useEffect(() => {
@@ -32,6 +36,43 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
       editorRef.current.innerHTML = editorState.content;
     }
   }, [editorState.content, editorState.mode]);
+
+  // Calculate available space under the wrapper and set TextArea height to 80% of that.
+  useEffect(() => {
+    const calcHeight = () => {
+      const pageHeight = window.innerHeight;
+      const wrapperTop = sourceWrapperRef.current?.getBoundingClientRect().top ?? 0;
+      const available = Math.max(0, pageHeight - wrapperTop);
+      const heightPx = Math.max(120, Math.floor(available * 0.8)); // minimum height safeguard
+      setSourceHeight(`${heightPx}px`);
+    };
+
+    if (editorState.mode === "source") {
+      // run calculation after layout has settled
+      calcHeight();
+      requestAnimationFrame(calcHeight);
+      const t = window.setTimeout(calcHeight, 50);
+
+      window.addEventListener("resize", calcHeight);
+      return () => {
+        window.clearTimeout(t);
+        window.removeEventListener("resize", calcHeight);
+      };
+    }
+  }, [editorState.mode]);
+
+  // Optional: if you want to auto-focus the actual textarea DOM when entering source mode
+  useEffect(() => {
+    if (editorState.mode === "source") {
+      // AntD wraps the native textarea, so query for it inside the wrapper
+      const ta = sourceWrapperRef.current?.querySelector("textarea") as
+        | HTMLTextAreaElement
+        | null;
+      if (ta) {
+        ta.focus();
+      }
+    }
+  }, [editorState.mode]);
 
   // Function to update history
   const updateHistory = (newContent: string) => {
@@ -248,13 +289,17 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
     switch (editorState.mode) {
       case "source":
         return (
-          <TextArea
-            ref={sourceRef}
-            value={editorState.content}
-            onChange={(e) => handleSourceChange(e.target.value)}
-            className="cls-source-editor"
-            placeholder="Enter HTML source code..."
-          />
+          // wrapper used for measurement (getBoundingClientRect on a plain div is safe)
+          <div ref={sourceWrapperRef} className="cls-source-wrapper">
+            <TextArea
+              ref={sourceRef}
+              value={editorState.content}
+              onChange={(e) => handleSourceChange(e.target.value)}
+              className="cls-source-editor"
+              placeholder="Enter HTML source code..."
+              style={{ height: sourceHeight }}
+            />
+          </div>
         );
 
       case "split":

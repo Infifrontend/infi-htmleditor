@@ -4,20 +4,23 @@
 }
 
 .cls-header {
-  padding: 24px;
+  padding: 12px 24px;
   background-color: white;
   border-bottom: 1px solid #e6f7ff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  h2 {
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 0;
+  }
 }
 
 .cls-header-title {
   margin: 0;
   color: #1890ff;
-  text-align: center;
 }
 
 .cls-header-subtitle {
-  text-align: center;
   color: #666;
   margin: 8px 0 0 0;
   font-size: 16px;
@@ -126,24 +129,6 @@
     }
   }
 }
-
-// .cls-tabs {
-//   background-color: white;
-//   margin: 0 24px;
-//   border-radius: 8px;
-//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-
-//   .ant-tabs-nav {
-//     padding: 0 24px;
-//     //
-//     margin-bottom: 20px;
-//     text-align: left;
-//     border-bottom: 1px solid #e6f7ff;
-//     .ant-tabs-nav-wrap {
-//       display: block !important;
-//     }
-//   }
-// }
 
 .cls-category-wrapper {
   padding: 0 24px;

@@ -1,10 +1,11 @@
-import React from 'react';
-import { Card, Typography, Button } from 'antd';
-import { EyeOutlined, EditOutlined } from '@ant-design/icons';
-import { Template } from '../../types';
-import './TemplateCard.scss';
+import React, { useEffect, useRef, useState } from "react";
+import { Card, Typography, Button } from "antd";
+import { EyeOutlined, EditOutlined } from "@ant-design/icons";
+import html2canvas from "html2canvas";
+import { Template } from "../../types";
+import "./TemplateCard.scss";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
 interface TemplateCardProps {
   template: Template;
@@ -12,19 +13,35 @@ interface TemplateCardProps {
   onPreview: (template: Template) => void;
 }
 
-const TemplateCard: React.FC<TemplateCardProps> = ({ template, onEdit, onPreview }) => {
-  const generatePreview = (content: string) => {
-    const div = document.createElement('div');
-    div.innerHTML = content;
-    const textContent = div.textContent || div.innerText || '';
-    return textContent.length > 100 ? textContent.substring(0, 100) + '...' : textContent;
-  };
+const TemplateCard: React.FC<TemplateCardProps> = ({
+  template,
+  onEdit,
+  onPreview,
+}) => {
+  // the following code generates a preview image of the template content using html2canvas
+  // and displays it in the card. This is a workaround since rendering raw HTML directly can be unsafe.
+  // In a real app, you might want to sanitize the HTML or use a safer method to render previews.
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  // to capture the hidden content for preview generation
+  const hiddenContentRef = useRef<HTMLDivElement>(null);
+
+  // Generate preview image when the component mounts or when the template content changes
+  useEffect(() => {
+    if (hiddenContentRef.current) {
+      html2canvas(hiddenContentRef.current, { backgroundColor: null }).then(
+        (canvas) => {
+          setImageUrl(canvas.toDataURL("image/png"));
+        }
+      );
+    }
+  }, [template.content]);
 
   return (
     <Card
       hoverable
       className="cls-card"
-      bodyStyle={{ padding: '16px', height: '100%' }}
+      bodyStyle={{ padding: "16px", height: "100%" }}
       actions={[
         <Button
           key="preview"
@@ -43,18 +60,34 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, onEdit, onPreview
           className="cls-btn-edit"
         >
           Edit
-        </Button>
+        </Button>,
       ]}
     >
       <div className="cls-card-body">
         <Title level={4} className="cls-title">
           {template.title}
         </Title>
+
         <div className="cls-preview-box">
-          <Paragraph className="cls-preview-text" ellipsis={{ rows: 4 }}>
-            {generatePreview(template.content)}
-          </Paragraph>
+          {imageUrl ? (
+            <div className="cls-preview-img-container">
+              <img
+                src={imageUrl}
+                alt="template preview"
+                className="cls-preview-img"
+              />
+            </div>
+          ) : (
+            <p className="cls-preview-text">Generating preview...</p>
+          )}
         </div>
+
+        {/* Hidden element for html2canvas snapshot */}
+        <div
+          ref={hiddenContentRef}
+          style={{ position: "absolute", left: "-9999px", top: 0 }}
+          dangerouslySetInnerHTML={{ __html: template.content }}
+        />
       </div>
     </Card>
   );

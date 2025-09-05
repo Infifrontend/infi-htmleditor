@@ -41,7 +41,8 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
   useEffect(() => {
     const calcHeight = () => {
       const pageHeight = window.innerHeight;
-      const wrapperTop = sourceWrapperRef.current?.getBoundingClientRect().top ?? 0;
+      const wrapperTop =
+        sourceWrapperRef.current?.getBoundingClientRect().top ?? 0;
       const available = Math.max(0, pageHeight - wrapperTop);
       const heightPx = Math.max(120, Math.floor(available * 0.8)); // minimum height safeguard
       setSourceHeight(`${heightPx}px`);
@@ -65,9 +66,9 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
   useEffect(() => {
     if (editorState.mode === "source") {
       // AntD wraps the native textarea, so query for it inside the wrapper
-      const ta = sourceWrapperRef.current?.querySelector("textarea") as
-        | HTMLTextAreaElement
-        | null;
+      const ta = sourceWrapperRef.current?.querySelector(
+        "textarea"
+      ) as HTMLTextAreaElement | null;
       if (ta) {
         ta.focus();
       }
@@ -311,10 +312,11 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
                   <strong>Source Code</strong>
                 </div>
                 <TextArea
+                  ref={sourceRef}
                   value={editorState.content}
                   onChange={(e) => handleSourceChange(e.target.value)}
                   className="cls-source-code"
-                  bordered={false}
+                  style={{ height: sourceHeight }}
                 />
               </div>
             </Col>

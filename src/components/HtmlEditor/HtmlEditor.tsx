@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Layout, Typography, message, Input, Row, Col, Button } from "antd";
+import { Layout, Typography, message, Row, Col, Button } from "antd";
 import { Template, EditorState, ToolbarAction } from "../../types";
 import EditorToolbar from "./../EditorToolbar/EditorToolbar";
 import "./HtmlEditor.scss";
+import MonacoEditor from "@monaco-editor/react";
 
 const { Content } = Layout;
 const { Title } = Typography;
-const { TextArea } = Input;
 
 interface HtmlEditorProps {
   template: Template;
@@ -24,7 +24,6 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
 
   // Refs for contenteditable div and textarea
   const editorRef = useRef<HTMLDivElement>(null);
-  const sourceRef = useRef<any>(null); // keep if you need programmatic access (AntD wraps textarea)
   const sourceWrapperRef = useRef<HTMLDivElement>(null); // <-- wrapper DOM element used for measurements
 
   // State to hold calculated source TextArea height
@@ -292,13 +291,26 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
         return (
           // wrapper used for measurement (getBoundingClientRect on a plain div is safe)
           <div ref={sourceWrapperRef} className="cls-source-wrapper">
-            <TextArea
+            {/* <TextArea
               ref={sourceRef}
               value={editorState.content}
               onChange={(e) => handleSourceChange(e.target.value)}
               className="cls-source-editor"
               placeholder="Enter HTML source code..."
               style={{ height: sourceHeight }}
+            /> */}
+            <MonacoEditor
+              height={sourceHeight}
+              defaultLanguage="html"
+              theme="vs-dark"
+              value={editorState.content}
+              onChange={(e: any) => handleSourceChange(e.target.value)}
+              options={{
+                minimap: { enabled: false },
+                automaticLayout: true,
+                fontSize: 14,
+                scrollBeyondLastLine: false,
+              }}
             />
           </div>
         );
@@ -311,12 +323,17 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
                 <div className="cls-split-header">
                   <strong>Source Code</strong>
                 </div>
-                <TextArea
-                  ref={sourceRef}
+                <MonacoEditor
+                  height={sourceHeight}
+                  defaultLanguage="html"
+                  theme="vs-dark"
                   value={editorState.content}
-                  onChange={(e) => handleSourceChange(e.target.value)}
-                  className="cls-source-code"
-                  style={{ height: sourceHeight }}
+                  onChange={(e: any) => handleSourceChange(e.target.value)}
+                  options={{
+                    minimap: { enabled: false },
+                    automaticLayout: true,
+                    fontSize: 14,
+                  }}
                 />
               </div>
             </Col>

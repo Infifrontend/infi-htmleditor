@@ -1,6 +1,14 @@
 import React, { useState } from "react";
-import { Layout, Typography, Tabs, Row, Col, Button, Modal } from "antd";
-import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import {
+  Layout,
+  Typography,
+  Tabs,
+  Row,
+  Col,
+  Button,
+  Modal,
+  Pagination,
+} from "antd";
 import { Template } from "../../types";
 import {
   getAllCategories,
@@ -25,21 +33,11 @@ const TemplateList: React.FC<TemplateListProps> = ({ onSelectTemplate }) => {
   const templatesPerPage = 8;
   const templatesPerRow = 4;
 
-  const handlePageChange = (category: string, direction: "next" | "prev") => {
-    setCurrentPages((prev) => {
-      const templates = getTemplatesByCategory(category);
-      const totalPages = Math.ceil(templates.length / templatesPerPage);
-      const currentPage = prev[category] || 0;
-
-      let newPage = currentPage;
-      if (direction === "next" && currentPage < totalPages - 1) {
-        newPage = currentPage + 1;
-      } else if (direction === "prev" && currentPage > 0) {
-        newPage = currentPage - 1;
-      }
-
-      return { ...prev, [category]: newPage };
-    });
+  const handlePageChange = (category: string, page: number) => {
+    setCurrentPages((prev) => ({
+      ...prev,
+      [category]: page - 1, // AntD Pagination is 1-based, our state is 0-based
+    }));
   };
 
   const handlePreview = (template: Template) => {
@@ -82,34 +80,13 @@ const TemplateList: React.FC<TemplateListProps> = ({ onSelectTemplate }) => {
 
         {totalPages > 1 && (
           <div className="cls-pagination">
-            <Button
-              icon={<ArrowLeftOutlined />}
-              disabled={currentPage === 0}
-              onClick={() => handlePageChange(category, "prev")}
-              type="text"
-              className={`cls-btn-prev ${
-                currentPage === 0 ? "cls-btn-disabled" : ""
-              }`}
-            >
-              Previous
-            </Button>
-
-            <span className="cls-page-info">
-              Page {currentPage + 1} of {totalPages}
-            </span>
-
-            <Button
-              icon={<ArrowRightOutlined />}
-              iconPosition="end"
-              disabled={currentPage === totalPages - 1}
-              onClick={() => handlePageChange(category, "next")}
-              type="text"
-              className={`cls-btn-next ${
-                currentPage === totalPages - 1 ? "cls-btn-disabled" : ""
-              }`}
-            >
-              Next
-            </Button>
+            <Pagination
+              current={currentPage + 1} // AntD expects 1-based
+              pageSize={templatesPerPage}
+              total={templates.length}
+              onChange={(page) => handlePageChange(category, page)}
+              showSizeChanger={false}
+            />
           </div>
         )}
       </div>
@@ -139,8 +116,7 @@ const TemplateList: React.FC<TemplateListProps> = ({ onSelectTemplate }) => {
           centered
           size="large"
           items={tabItems}
-          // className="cls-tabs"
-          className="cls-manage-tabs "
+          className="cls-manage-tabs"
         />
       </Content>
 

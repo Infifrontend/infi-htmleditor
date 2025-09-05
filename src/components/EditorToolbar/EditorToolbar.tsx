@@ -1,14 +1,14 @@
-import React from 'react';
-import { 
-  Tooltip, 
-  Space, 
-  Divider, 
-  Select, 
-  ColorPicker, 
+import React from "react";
+import {
+  Tooltip,
+  Space,
+  Divider,
+  Select,
+  ColorPicker,
   Button,
   Dropdown,
-  MenuProps
-} from 'antd';
+  MenuProps,
+} from "antd";
 import {
   BoldOutlined,
   ItalicOutlined,
@@ -29,9 +29,9 @@ import {
   DownloadOutlined,
   UploadOutlined,
   EyeOutlined,
-  SplitCellsOutlined
-} from '@ant-design/icons';
-import { ToolbarAction } from '../../types';
+} from "@ant-design/icons";
+import { ToolbarAction } from "../../types";
+import "./EditorToolbar.scss";
 
 const { Option } = Select;
 
@@ -41,84 +41,80 @@ interface EditorToolbarProps {
   canRedo: boolean;
 }
 
-const EditorToolbar: React.FC<EditorToolbarProps> = ({ onAction, canUndo, canRedo }) => {
+const EditorToolbar: React.FC<EditorToolbarProps> = ({
+  onAction,
+  canUndo,
+  canRedo,
+}) => {
   const handleFontSizeChange = (value: string) => {
-    onAction({ type: 'fontSize', value });
+    onAction({ type: "fontSize", value });
   };
 
   const handleHeadingChange = (value: string) => {
-    onAction({ type: 'heading', value });
+    onAction({ type: "heading", value });
   };
 
   const handleColorChange = (color: any) => {
-    onAction({ type: 'textColor', value: color.toHexString() });
+    onAction({ type: "textColor", value: color.toHexString() });
   };
 
   const handleBackgroundColorChange = (color: any) => {
-    onAction({ type: 'backgroundColor', value: color.toHexString() });
+    onAction({ type: "backgroundColor", value: color.toHexString() });
   };
 
-  const exportMenuItems: MenuProps['items'] = [
+  const exportMenuItems: MenuProps["items"] = [
     {
-      key: 'html',
-      label: 'Export as HTML',
-      onClick: () => onAction({ type: 'export', value: 'html' })
+      key: "html",
+      label: "Export as HTML",
+      onClick: () => onAction({ type: "export", value: "html" }),
     },
     {
-      key: 'markdown',
-      label: 'Export as Markdown',
-      onClick: () => onAction({ type: 'export', value: 'markdown' })
+      key: "markdown",
+      label: "Export as Markdown",
+      onClick: () => onAction({ type: "export", value: "markdown" }),
     },
     {
-      key: 'pdf',
-      label: 'Export as PDF',
-      onClick: () => onAction({ type: 'export', value: 'pdf' })
-    }
+      key: "pdf",
+      label: "Export as PDF",
+      onClick: () => onAction({ type: "export", value: "pdf" }),
+    },
   ];
 
-  const viewMenuItems: MenuProps['items'] = [
+  const viewMenuItems: MenuProps["items"] = [
     {
-      key: 'wysiwyg',
-      label: 'WYSIWYG Mode',
-      onClick: () => onAction({ type: 'changeMode', value: 'wysiwyg' })
+      key: "wysiwyg",
+      label: "WYSIWYG Mode",
+      onClick: () => onAction({ type: "changeMode", value: "wysiwyg" }),
     },
     {
-      key: 'source',
-      label: 'Source Code Mode',
-      onClick: () => onAction({ type: 'changeMode', value: 'source' })
+      key: "source",
+      label: "Source Code Mode",
+      onClick: () => onAction({ type: "changeMode", value: "source" }),
     },
     {
-      key: 'split',
-      label: 'Split View',
-      onClick: () => onAction({ type: 'changeMode', value: 'split' })
-    }
+      key: "split",
+      label: "Split View",
+      onClick: () => onAction({ type: "changeMode", value: "split" }),
+    },
   ];
 
   return (
-    <div style={{ 
-      padding: '12px 16px', 
-      backgroundColor: '#fafafa', 
-      borderBottom: '1px solid #e6f7ff',
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '8px',
-      alignItems: 'center'
-    }}>
+    <div className="cls-editor-toolbar">
       {/* History Actions */}
       <Space>
         <Tooltip title="Undo">
-          <Button 
-            icon={<UndoOutlined />} 
+          <Button
+            icon={<UndoOutlined />}
             disabled={!canUndo}
-            onClick={() => onAction({ type: 'undo' })}
+            onClick={() => onAction({ type: "undo" })}
             type="text"
           />
         </Tooltip>
         <Tooltip title="Redo">
-          <Button 
-            icon={<RedoOutlined />} 
+          <Button
+            icon={<RedoOutlined />}
             disabled={!canRedo}
-            onClick={() => onAction({ type: 'redo' })}
+            onClick={() => onAction({ type: "redo" })}
             type="text"
           />
         </Tooltip>
@@ -128,8 +124,8 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({ onAction, canUndo, canRed
 
       {/* Text Formatting */}
       <Space>
-        <Select 
-          defaultValue="p" 
+        <Select
+          defaultValue="p"
           style={{ width: 120 }}
           onChange={handleHeadingChange}
           placeholder="Heading"
@@ -144,8 +140,8 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({ onAction, canUndo, canRed
           <Option value="blockquote">Quote</Option>
         </Select>
 
-        <Select 
-          defaultValue="14px" 
+        <Select
+          defaultValue="14px"
           style={{ width: 80 }}
           onChange={handleFontSizeChange}
           placeholder="Size"
@@ -165,30 +161,30 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({ onAction, canUndo, canRed
       {/* Basic Formatting */}
       <Space>
         <Tooltip title="Bold">
-          <Button 
-            icon={<BoldOutlined />} 
-            onClick={() => onAction({ type: 'bold' })}
+          <Button
+            icon={<BoldOutlined />}
+            onClick={() => onAction({ type: "bold" })}
             type="text"
           />
         </Tooltip>
         <Tooltip title="Italic">
-          <Button 
-            icon={<ItalicOutlined />} 
-            onClick={() => onAction({ type: 'italic' })}
+          <Button
+            icon={<ItalicOutlined />}
+            onClick={() => onAction({ type: "italic" })}
             type="text"
           />
         </Tooltip>
         <Tooltip title="Underline">
-          <Button 
-            icon={<UnderlineOutlined />} 
-            onClick={() => onAction({ type: 'underline' })}
+          <Button
+            icon={<UnderlineOutlined />}
+            onClick={() => onAction({ type: "underline" })}
             type="text"
           />
         </Tooltip>
         <Tooltip title="Strikethrough">
-          <Button 
-            icon={<StrikethroughOutlined />} 
-            onClick={() => onAction({ type: 'strikethrough' })}
+          <Button
+            icon={<StrikethroughOutlined />}
+            onClick={() => onAction({ type: "strikethrough" })}
             type="text"
           />
         </Tooltip>
@@ -200,7 +196,9 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({ onAction, canUndo, canRed
       <Space>
         <Tooltip title="Text Color">
           <ColorPicker onChange={handleColorChange} size="small">
-            <Button type="text" style={{ color: '#1890ff' }}>A</Button>
+            <Button type="text" style={{ color: "#1890ff" }}>
+              A
+            </Button>
           </ColorPicker>
         </Tooltip>
         <Tooltip title="Background Color">
@@ -215,23 +213,23 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({ onAction, canUndo, canRed
       {/* Alignment */}
       <Space>
         <Tooltip title="Align Left">
-          <Button 
-            icon={<AlignLeftOutlined />} 
-            onClick={() => onAction({ type: 'align', value: 'left' })}
+          <Button
+            icon={<AlignLeftOutlined />}
+            onClick={() => onAction({ type: "align", value: "left" })}
             type="text"
           />
         </Tooltip>
         <Tooltip title="Align Center">
-          <Button 
-            icon={<AlignCenterOutlined />} 
-            onClick={() => onAction({ type: 'align', value: 'center' })}
+          <Button
+            icon={<AlignCenterOutlined />}
+            onClick={() => onAction({ type: "align", value: "center" })}
             type="text"
           />
         </Tooltip>
         <Tooltip title="Align Right">
-          <Button 
-            icon={<AlignRightOutlined />} 
-            onClick={() => onAction({ type: 'align', value: 'right' })}
+          <Button
+            icon={<AlignRightOutlined />}
+            onClick={() => onAction({ type: "align", value: "right" })}
             type="text"
           />
         </Tooltip>
@@ -242,16 +240,16 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({ onAction, canUndo, canRed
       {/* Lists */}
       <Space>
         <Tooltip title="Ordered List">
-          <Button 
-            icon={<OrderedListOutlined />} 
-            onClick={() => onAction({ type: 'orderedList' })}
+          <Button
+            icon={<OrderedListOutlined />}
+            onClick={() => onAction({ type: "orderedList" })}
             type="text"
           />
         </Tooltip>
         <Tooltip title="Unordered List">
-          <Button 
-            icon={<UnorderedListOutlined />} 
-            onClick={() => onAction({ type: 'unorderedList' })}
+          <Button
+            icon={<UnorderedListOutlined />}
+            onClick={() => onAction({ type: "unorderedList" })}
             type="text"
           />
         </Tooltip>
@@ -262,30 +260,30 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({ onAction, canUndo, canRed
       {/* Insert Elements */}
       <Space>
         <Tooltip title="Insert Link">
-          <Button 
-            icon={<LinkOutlined />} 
-            onClick={() => onAction({ type: 'insertLink' })}
+          <Button
+            icon={<LinkOutlined />}
+            onClick={() => onAction({ type: "insertLink" })}
             type="text"
           />
         </Tooltip>
         <Tooltip title="Insert Image">
-          <Button 
-            icon={<PictureOutlined />} 
-            onClick={() => onAction({ type: 'insertImage' })}
+          <Button
+            icon={<PictureOutlined />}
+            onClick={() => onAction({ type: "insertImage" })}
             type="text"
           />
         </Tooltip>
         <Tooltip title="Insert Table">
-          <Button 
-            icon={<TableOutlined />} 
-            onClick={() => onAction({ type: 'insertTable' })}
+          <Button
+            icon={<TableOutlined />}
+            onClick={() => onAction({ type: "insertTable" })}
             type="text"
           />
         </Tooltip>
         <Tooltip title="Code Block">
-          <Button 
-            icon={<CodeOutlined />} 
-            onClick={() => onAction({ type: 'codeBlock' })}
+          <Button
+            icon={<CodeOutlined />}
+            onClick={() => onAction({ type: "codeBlock" })}
             type="text"
           />
         </Tooltip>
@@ -295,27 +293,27 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({ onAction, canUndo, canRed
 
       {/* View Options */}
       <Space>
-        <Dropdown menu={{ items: viewMenuItems }} trigger={['click']}>
+        <Dropdown menu={{ items: viewMenuItems }} trigger={["click"]}>
           <Button icon={<EyeOutlined />} type="text">
             View
           </Button>
         </Dropdown>
-        <Dropdown menu={{ items: exportMenuItems }} trigger={['click']}>
+        <Dropdown menu={{ items: exportMenuItems }} trigger={["click"]}>
           <Button icon={<DownloadOutlined />} type="text">
             Export
           </Button>
         </Dropdown>
         <Tooltip title="Import HTML">
-          <Button 
-            icon={<UploadOutlined />} 
-            onClick={() => onAction({ type: 'import' })}
+          <Button
+            icon={<UploadOutlined />}
+            onClick={() => onAction({ type: "import" })}
             type="text"
           />
         </Tooltip>
         <Tooltip title="Save">
-          <Button 
-            icon={<SaveOutlined />} 
-            onClick={() => onAction({ type: 'save' })}
+          <Button
+            icon={<SaveOutlined />}
+            onClick={() => onAction({ type: "save" })}
             type="primary"
           />
         </Tooltip>

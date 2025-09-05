@@ -1,16 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  Layout,
-  Typography,
-  message,
-  Modal,
-  Input,
-  Row,
-  Col,
-  Button,
-} from "antd";
+import { Layout, Typography, message, Input, Row, Col, Button } from "antd";
 import { Template, EditorState, ToolbarAction } from "../../types";
 import EditorToolbar from "./../EditorToolbar/EditorToolbar";
+import "./HtmlEditor.scss";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -22,6 +14,7 @@ interface HtmlEditorProps {
 }
 
 const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
+  // Initialize editor state with history for undo/redo
   const [editorState, setEditorState] = useState<EditorState>({
     content: template.content,
     mode: "wysiwyg",
@@ -29,15 +22,18 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
     currentHistoryIndex: 0,
   });
 
+  // Refs for contenteditable div and textarea
   const editorRef = useRef<HTMLDivElement>(null);
   const sourceRef = useRef<HTMLTextAreaElement>(null);
 
+  // Update contenteditable div when content changes
   useEffect(() => {
     if (editorRef.current && editorState.mode !== "source") {
       editorRef.current.innerHTML = editorState.content;
     }
   }, [editorState.content, editorState.mode]);
 
+  // Function to update history
   const updateHistory = (newContent: string) => {
     const newHistory = editorState.history.slice(
       0,
@@ -52,6 +48,7 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
     }));
   };
 
+  // Handle content change in contenteditable div
   const handleContentChange = () => {
     if (editorRef.current) {
       const newContent = editorRef.current.innerHTML;
@@ -62,6 +59,7 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
     }
   };
 
+  // Handle content change in source code textarea
   const handleSourceChange = (value: string) => {
     setEditorState((prev) => ({
       ...prev,
@@ -69,25 +67,33 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
     }));
   };
 
+  // Execute document commands
   const executeCommand = (command: string, value?: string) => {
     document.execCommand(command, false, value);
     handleContentChange();
   };
 
+  // Handle toolbar actions
   const handleToolbarAction = (action: ToolbarAction) => {
     switch (action.type) {
+      // Text formatting
+      // Bold
       case "bold":
         executeCommand("bold");
         break;
+      // Italic
       case "italic":
         executeCommand("italic");
         break;
+      // Underline
       case "underline":
         executeCommand("underline");
         break;
+      // Strikethrough
       case "strikethrough":
         executeCommand("strikeThrough");
         break;
+      // Alignment
       case "align":
         executeCommand(
           `justify${
@@ -95,40 +101,62 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
           }`
         );
         break;
+      // Lists
       case "orderedList":
         executeCommand("insertOrderedList");
         break;
+      // Unordered List
       case "unorderedList":
         executeCommand("insertUnorderedList");
         break;
+      // Indentation
+      case "indent":
+        executeCommand("indent");
+        break;
+      case "outdent":
+        executeCommand("outdent");
+        break;
+      // Clear Formatting
+      case "clearFormatting":
+        executeCommand("removeFormat");
+        break;
+      // Advanced features
       case "heading":
         executeCommand("formatBlock", action.value);
         break;
+      // Font size
       case "fontSize":
         executeCommand("fontSize", action.value);
         break;
+      // Text color
       case "textColor":
         executeCommand("foreColor", action.value);
         break;
+      // Background color
       case "backgroundColor":
         executeCommand("backColor", action.value);
         break;
+      // Insert link
       case "insertLink":
         const url = prompt("Enter URL:");
         if (url) executeCommand("createLink", url);
         break;
+      // Insert image
       case "insertImage":
         const imgUrl = prompt("Enter image URL:");
         if (imgUrl) executeCommand("insertImage", imgUrl);
         break;
+      // Insert table
       case "insertTable":
         const rows = prompt("Number of rows:") || "3";
         const cols = prompt("Number of columns:") || "3";
         insertTable(parseInt(rows), parseInt(cols));
         break;
+      // Code block
       case "codeBlock":
         executeCommand("formatBlock", "pre");
         break;
+      // Undo/Redo
       case "undo":
         if (editorState.currentHistoryIndex > 0) {
           const newIndex = editorState.currentHistoryIndex - 1;
@@ -149,6 +177,7 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
           }));
         }
         break;
+      // Save/Export/Import
       case "save":
         message.success("Template saved successfully!");
         updateHistory(editorState.content);
@@ -159,6 +188,7 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
       case "import":
         handleImport();
         break;
+      // Change mode
       case "changeMode":
         setEditorState((prev) => ({ ...prev, mode: action.value }));
         break;
@@ -168,13 +198,11 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
   };
 
   const insertTable = (rows: number, cols: number) => {
-    let tableHTML =
-      '<table style="border-collapse: collapse; width: 100%; margin: 10px 0;">';
+    let tableHTML = '<table class="cls-table">';
     for (let i = 0; i < rows; i++) {
       tableHTML += "<tr>";
       for (let j = 0; j < cols; j++) {
-        tableHTML +=
-          '<td style="border: 1px solid #ddd; padding: 8px;">Cell content</td>';
+        tableHTML += '<td class="cls-td">Cell content</td>';
       }
       tableHTML += "</tr>";
     }
@@ -224,72 +252,34 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
             ref={sourceRef}
             value={editorState.content}
             onChange={(e) => handleSourceChange(e.target.value)}
-            style={{
-              minHeight: "500px",
-              fontFamily: "Monaco, Consolas, monospace",
-              fontSize: "14px",
-            }}
+            className="cls-source-editor"
             placeholder="Enter HTML source code..."
           />
         );
 
       case "split":
         return (
-          <Row gutter={16} style={{ height: "500px" }}>
+          <Row gutter={16} className="cls-split-row">
             <Col span={12}>
-              <div
-                style={{
-                  height: "100%",
-                  border: "1px solid #d9d9d9",
-                  borderRadius: "6px",
-                }}
-              >
-                <div
-                  style={{
-                    padding: "8px",
-                    backgroundColor: "#fafafa",
-                    borderBottom: "1px solid #d9d9d9",
-                  }}
-                >
+              <div className="cls-split-panel">
+                <div className="cls-split-header">
                   <strong>Source Code</strong>
                 </div>
                 <TextArea
                   value={editorState.content}
                   onChange={(e) => handleSourceChange(e.target.value)}
-                  style={{
-                    height: "calc(100% - 40px)",
-                    border: "none",
-                    fontFamily: "Monaco, Consolas, monospace",
-                    fontSize: "12px",
-                  }}
+                  className="cls-source-code"
                   bordered={false}
                 />
               </div>
             </Col>
             <Col span={12}>
-              <div
-                style={{
-                  height: "100%",
-                  border: "1px solid #d9d9d9",
-                  borderRadius: "6px",
-                }}
-              >
-                <div
-                  style={{
-                    padding: "8px",
-                    backgroundColor: "#fafafa",
-                    borderBottom: "1px solid #d9d9d9",
-                  }}
-                >
+              <div className="cls-split-panel">
+                <div className="cls-split-header">
                   <strong>Preview</strong>
                 </div>
                 <div
-                  style={{
-                    height: "calc(100% - 40px)",
-                    padding: "16px",
-                    overflow: "auto",
-                    backgroundColor: "white",
-                  }}
+                  className="cls-preview"
                   dangerouslySetInnerHTML={{ __html: editorState.content }}
                 />
               </div>
@@ -303,16 +293,7 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
             ref={editorRef}
             contentEditable
             onInput={handleContentChange}
-            style={{
-              minHeight: "500px",
-              padding: "20px",
-              border: "1px solid #d9d9d9",
-              borderRadius: "6px",
-              backgroundColor: "white",
-              outline: "none",
-              lineHeight: "1.6",
-              fontSize: "14px",
-            }}
+            className="cls-editor"
             dangerouslySetInnerHTML={{ __html: editorState.content }}
           />
         );
@@ -320,22 +301,10 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh", backgroundColor: "white" }}>
-      <div
-        style={{
-          padding: "16px 24px",
-          backgroundColor: "#fafafa",
-          borderBottom: "1px solid #e6f7ff",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Title level={3} style={{ margin: 0, color: "#1890ff" }}>
+    <Layout className="cls-layout">
+      <div className="cls-header">
+        <div className="cls-header-inner">
+          <Title level={3} className="cls-title">
             Editing: {template.title}
           </Title>
           <Button onClick={onBack} type="default">
@@ -352,9 +321,7 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ template, onBack }) => {
         }
       />
 
-      <Content style={{ padding: "24px", backgroundColor: "#f5f5f5" }}>
-        {renderEditor()}
-      </Content>
+      <Content className="cls-content">{renderEditor()}</Content>
     </Layout>
   );
 };
